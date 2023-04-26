@@ -58,7 +58,7 @@ export class ViewGalleryComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.database = Config.database;
+        this.database = localStorage.getItem('company');
         this.focusEvent.emit(true);
         this.elem = document.documentElement;
         this._route.params.subscribe(params => {
@@ -191,7 +191,8 @@ export class ViewGalleryComponent implements OnInit {
     }
 
     public getArticle(): void {
-
+        this.articleImage = ""
+        this.makeImage = ""
         if (this.filterArticle) {
 
             this._articleService.getAll({
