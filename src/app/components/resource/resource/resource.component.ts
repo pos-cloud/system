@@ -51,6 +51,7 @@ export class ResourceComponent implements OnInit {
             'required': 'Este campo es requerido.'
         }
     };
+    database: string;
 
     constructor(
         private _resourceService: ResourceService,
@@ -64,6 +65,7 @@ export class ResourceComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.database = localStorage.getItem('company');
         this.userCountry = Config.country;
         let pathLocation: string[] = this._router.url.split('/');
         this.userType = pathLocation[1];
@@ -270,7 +272,7 @@ export class ResourceComponent implements OnInit {
 
     public getFile(): void {
         if (this.resource.file) {
-            this.src = `${Config.apiURL}get-resource?filename=${this.resource.file}&database=${Config.database}`
+            this.src = `${Config.apiURL}get-resource?filename=${this.resource.file}&database=${this.database}`
         } else {
             this.showMessage("No se encontro el archivo", 'danger', false)
             this.loading = true;

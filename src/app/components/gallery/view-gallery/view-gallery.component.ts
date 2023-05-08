@@ -85,7 +85,7 @@ export class ViewGalleryComponent implements OnInit {
 
         // INICIAMOS SOCKET
         this.socket.emit('start', {
-            database: Config.database,
+            database: this.database,
             clientType: 'pos'
         });
         // ESCUCHAMOS SOCKET
@@ -153,7 +153,7 @@ export class ViewGalleryComponent implements OnInit {
                     this.gallery = result[0].galleries[0]
                     this.gallery.resources.forEach(element => {
 
-                        this.src = `${Config.apiURL}get-resource?filename=${element['file']}&database=${Config.database}`
+                        this.src = `${Config.apiURL}get-resource?filename=${element['file']}&database=${this.database}`
                         this.images.push(this.src)
 
                     });

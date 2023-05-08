@@ -68,7 +68,7 @@
                     <a ngbNavLink>Recursos</a>
                     <ng-template ngbNavContent>
                         <div class="row">
-                            <form (ngSubmit)="addResource(resourceForm)">
+                            <form #resourceForm="ngForm" (ngSubmit)="addResource(resourceForm)">
                                 <div class="row">
                                     <div class="form-group col-md-7">
                                         <label for="resource" class="control-label">Recurso:</label>

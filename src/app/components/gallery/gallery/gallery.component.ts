@@ -30,6 +30,7 @@ export class GalleryComponent implements OnInit {
     public percentageSelected: number;
     public orientation: string = 'horizontal';
     public resources: Resource[];
+    resourceForm: NgForm;
 
     public formErrors = {
         'name': '',
