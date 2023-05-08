@@ -7,9 +7,9 @@
                 <div class="row" style="margin-bottom: auto; margin-top:4%">
                     <div *ngIf="article" class="col-12">
                         <h1 style="color:white">{{article.description}}</h1>
-                        <img *ngIf="makeImage" [src]="apiURL + 'get-image-make/'+makeImage+'/'+database" style="height:44vh" width="auto">
-                        <img *ngIf="articleImage" [src]="apiURL + 'get-image-article/'+articleImage+'/'+database" style="height:44vh" width="auto">
-                        <h3 style="color:white">{{article.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</h3>
+                        <img *ngIf="makeImage" [src]="apiURL + 'get-image-make/'+makeImage+'/'+database" style="height:35vh" width="auto">
+                        <img *ngIf="articleImage" [src]="apiURL + 'get-image-article/'+articleImage+'/'+database" style="height:35vh" width="auto">
+                        <h3 style="color:white;font-size: 50px;font-weight: bold;">{{article.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</h3>
                         <p [innerHTML]="article?.observation"></p>
                     </div>
                     <div class="col-12" style="font-size: 27px;font-weight: bold;color: white;">
