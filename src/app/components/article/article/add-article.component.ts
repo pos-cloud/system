@@ -94,7 +94,7 @@ export class AddArticleComponent implements OnInit {
   deposits: Deposit[] = new Array();
   locations: Location[] = new Array();
   categories: Category[] = new Array();
-  variants: Variant[] = new Array();
+  variants: any = new Array();
   unitsOfMeasurement: UnitOfMeasurement[] = new Array();
   taxes: Taxes[] = new Array();
   otherFields: ArticleFields[] = new Array();
@@ -457,6 +457,7 @@ export class AddArticleComponent implements OnInit {
   }
 
   buildForm(): void {
+    
     this.articleForm = this._fb.group({
       _id: [this.article._id, []],
       order: [this.article.order, []],
@@ -518,7 +519,8 @@ export class AddArticleComponent implements OnInit {
       height: [this.article.height, []],
       depth: [this.article.depth, []],
       showMenu: [this.article.showMenu, []],
-      tiendaNubeId: [this.article.tiendaNubeId, []]
+      tiendaNubeId: [this.article.tiendaNubeId, []],
+      // variants: [this.variants, []]
     });
 
     this.newDeposit = this._fb.group({
@@ -992,28 +994,14 @@ export class AddArticleComponent implements OnInit {
   }
 
   getLastArticle(): void {
-    let query = `where="type":"${Type.Final}"&sort="_id":-1&limit=1`;
-
-    this._articleService.getArticles(query).subscribe(
+    this._articleService.getLasCode().subscribe(
       (result) => {
         let code = this.padString(1, this.config.article.code.validators.maxLength);
 
-        if (result.articles) {
-          if (result.articles[0]) {
-            if (!isNaN(parseInt(result.articles[0].code))) {
-              code = (parseInt(result.articles[0].code) + 1 + '').slice(
-                0,
-                this.config.article.code.validators.maxLength,
-              );
-            } else {
-              code = this.padString(1, this.config.article.code.validators.maxLength);
-            }
-          }
+        if (result.code) {
+          code = result.code
         }
-        this.article.code = this.padString(
-          code,
-          this.config.article.code.validators.maxLength,
-        );
+        this.article.code = code
 
         this.setValuesForm();
       },
@@ -1570,7 +1558,7 @@ export class AddArticleComponent implements OnInit {
       width: this.article.width,
       depth: this.article.depth,
       showMenu: this.article.showMenu ?? '',
-      tiendaNubeId: this.article.tiendaNubeId
+      tiendaNubeId: this.article.tiendaNubeId, 
     };
 
     this.articleForm.patchValue(values);
@@ -1653,7 +1641,10 @@ export class AddArticleComponent implements OnInit {
 
       if(this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
 
-      this._articleService.saveArticle(this.article, this.variants).subscribe(
+      this.variants.forEach((item)=>{
+       this.article.variants.push({value: item.value, type:item.type})
+      })
+      this._articleService.saveArticle(this.article).subscribe(
         (result) => {
           if (!result.article) {
             this.showToast(
