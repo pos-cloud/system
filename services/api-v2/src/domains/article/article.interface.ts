@@ -1,3 +1,4 @@
+import VariantValue from '../variant-value/variant-value.interface'
 import Account from './../../domains/account/account.interface'
 import Application from './../../domains/application/application.interface'
 import {ArticleField} from './../../domains/article-field/article-field.interface'
@@ -12,6 +13,7 @@ import Taxes from './../../domains/tax/taxes.interface'
 import UnitOfMeasurement from './../../domains/unit-of-measurement/unit-of-measurement.interface'
 import User from './../../domains/user/user.interface'
 import {IMeliAttrs} from './article.model'
+import VariantType from '../variant-type/variant-type.interface'
 
 export default interface Article extends Model {
   creationDate: string
@@ -95,4 +97,8 @@ export default interface Article extends Model {
   height: Number
   depth: Number
   showMenu: boolean
+  variants: {
+    value: VariantValue,
+    type: VariantType,
+  }[]
 }

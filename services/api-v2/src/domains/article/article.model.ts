@@ -127,7 +127,13 @@ class ArticleSchema extends Model {
       height: { type: Number},
       depth: { type: Number},
       showMenu: { type: Boolean, default: false},
-      tiendaNubeId: {type: Number, default: 0}
+      tiendaNubeId: {type: Number, default: 0},
+      variants: [
+        {
+        value: {type: Schema.Types.ObjectId, ref: 'variant-value'},
+        type: {type: Schema.Types.ObjectId, ref: 'variant-type'},
+      }
+    ]
 
     })
   }
