@@ -8,6 +8,7 @@ import {
   Validators,
   UntypedFormArray,
   NgForm,
+  FormArray,
   UntypedFormControl,
 } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -412,6 +413,9 @@ export class AddArticleComponent implements OnInit {
     }
     this.getVariantTypes()
     this.getVariantValues()
+    this.getUnitsOfMeasurement()
+    this.getCategory()
+    this.getMake()
   }
 
   getArticleTypes() {
@@ -542,8 +546,6 @@ export class AddArticleComponent implements OnInit {
       showMenu: [this.article.showMenu, []],
       tiendaNubeId: [this.article.tiendaNubeId, []],
       variants: this._fb.array([]),
-        value:[ '', []],
-        type: ['', []]
     });
 
     this.newDeposit = this._fb.group({
@@ -788,12 +790,12 @@ export class AddArticleComponent implements OnInit {
   }
 
   getArticle(): void {
-    this._articleService.getArticle(this.articleId).subscribe(
+    this._articleService.getById(this.articleId).subscribe(
       (result: any) => {
-        if (!result.article) {
+        if (!result.result) {
           this.showToast(result);
         } else {
-          this.article = result.article;
+          this.article = result.result;
           this.meliAttrs = Object.assign({}, this.article.meliAttrs);
           this.notes = this.article.notes;
           this.tags = this.article.tags;
@@ -859,11 +861,11 @@ export class AddArticleComponent implements OnInit {
             }
             return 0;
           });
-        //   if (this.variants && this.variants.length > 0) {
-        //     for (let variant of this.variants) {
-        //       this.setVariantByType(variant);
-        //     }
-        //   }
+          //   if (this.variants && this.variants.length > 0) {
+          //     for (let variant of this.variants) {
+          //       this.setVariantByType(variant);
+          //     }
+          //   }
         }
       },
       error => {
@@ -885,7 +887,7 @@ export class AddArticleComponent implements OnInit {
     let match = {
       operationType: { $ne: 'D' }
     }
-    this._variantValueService.getAll({project, match}).subscribe(
+    this._variantValueService.getAll({ project, match }).subscribe(
       result => {
         if (!result.result) {
           this.loading = false;
@@ -901,28 +903,90 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
-  private setVariantByType(variant: Variant): void {
+  public getCategory(): void {
+    this.loading = true;
 
-    let exist: boolean = false;
+    let project = {
+      "_id": 1,
+      "name": 1,
+      "operationType": 1
+    };
+    let match = {
+      operationType: { $ne: 'D' }
+    }
 
-    for (let v of this.variantsByTypes) {
-      if (v.type._id === variant.type._id) {
-        exist = true;
-        v.value.push(variant.value);
-        v.value = this.orderByPipe.transform(v.value, ['description']);
-        v.value = this.orderByPipe.transform(v.value, ['order']);
+    this._categoryService.getAll({project, match}).subscribe(
+      result =>{
+        if (!result.result) {
+          this.loading = false;
+          this.categories = new Array();
+        } else {
+          this.loading = false;
+          this.categories = result.result;
+        }
+      },
+      error => {
+        this.loading = false;
       }
+    );
+  }
+
+  public getMake(): void {
+    this.loading = true;
+
+    let project = {
+      "_id": 1,
+      "description": 1,
+      "operationType": 1
+    };
+    let match = {
+      operationType: { $ne: 'D' }
     }
 
-    if (!exist) {
-      this.variantsByTypes.push({
-        type: variant.type,
-        value: [variant.value]
-      });
-      this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'name');
-      this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'order');
-    }
+    this._makeService.getAll({project, match}).subscribe(
+      result =>{
+        if (!result.result) {
+          this.loading = false;
+          this.makes = new Array();
+        } else {
+          this.loading = false;
+          this.makes = result.result;
+        }
+      },
+      error => {
+        this.loading = false;
+      }
+    );
   }
+
+  public getUnitsOfMeasurement(): void {
+    this.loading = true;
+
+    let project = {
+      "_id": 1,
+      "name": 1,
+      "operationType": 1
+    };
+    let match = {
+      operationType: { $ne: 'D' }
+    }
+
+    this._unitOfMeasurementService.getAll({project, match}).subscribe(
+      result =>{
+        if (!result.result) {
+          this.loading = false;
+          this.unitsOfMeasurement = new Array();
+        } else {
+          this.loading = false;
+          this.unitsOfMeasurement = result.result;
+        }
+      },
+      error => {
+        this.loading = false;
+      }
+    );
+  }
+
   // loadURL(): void {
   //   if (this.articleForm.value.url === '') {
   //     let url = this.articleForm.value.description
@@ -963,22 +1027,17 @@ export class AddArticleComponent implements OnInit {
   // }
   public refreshValues(): void {
     this.filteredValues = this.variantValues
-    .filter((value: VariantValue) => value.type.name === this.variantTypeSelected.name)
-    .sort((a, b) => {
-      if (a.description < b.description) {
-        return -1;
-      }
-      if (a.description > b.description) {
-        return 1;
-      }
-      return 0;
-    });
-}
-
-public setvaluere() {
-console.log('acaa', this.variantTypeSelected)
-console.log('hhe', this.variantValueSelected)
-}
+      .filter((value: VariantValue) => value.type.name === this.variantTypeSelected.name)
+      .sort((a, b) => {
+        if (a.description < b.description) {
+          return -1;
+        }
+        if (a.description > b.description) {
+          return 1;
+        }
+        return 0;
+      });
+  }
 
   setValuesArray(): void {
     if (this.article.deposits && this.article.deposits.length > 0) {
@@ -1055,8 +1114,8 @@ console.log('hhe', this.variantValueSelected)
         console.log(x)
         variants.push(
           this._fb.group({
-            type: x.type._id,
-            value: x.value._id,
+            type: x.type,
+            value: x.value,
           }),
         );
       });
@@ -1712,6 +1771,23 @@ console.log('hhe', this.variantValueSelected)
     };
 
     this.articleForm.patchValue(values);
+  }
+
+  public addVariants(variantsForm: NgForm): void {
+    let valid = true;
+    const variants = this.articleForm.controls.variants as FormArray;
+
+    if (valid) {
+      variants.push(
+        this._fb.group({
+          type: variantsForm.value.type.name,
+          value: variantsForm.value.value.description,
+
+        })
+      );
+      variantsForm.resetForm();
+    }
+
   }
 
   addArticle(): void {
